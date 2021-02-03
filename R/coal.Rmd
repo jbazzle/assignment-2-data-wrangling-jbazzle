@@ -304,7 +304,7 @@ Create an interactive version of your previous figure.
 *Hint: Take a look at plotly::ggplotly(), or the gganimate package.*
 
 ```{r}
-test = coalbycountry %>% 
+barplot = coalbycountry %>% 
   ggplot(aes(x = destination, y = total, fill = destination)) +
   geom_bar(stat = 'identity')+
   scale_y_continuous(labels = scales::comma)+
@@ -315,7 +315,7 @@ test = coalbycountry %>%
   transition_time(year)+
   ease_aes('linear')
 
-animate(test)
+animate(barplot)
 
 
 ```
@@ -324,3 +324,24 @@ animate(test)
 ## 5) Show me something interesting
 
 There's a lot still to explore with this data set. Your final task is to show me something interesting. Drill down into the data and explain what's driving the secular trends that we have observed above. Or highlight interesting seasonality within a particular country. Or go back to the original `coal` data frame and look at exports by customs district, or by coal type. Do we changes or trends there? Etcetera. Etcetera. My only requirement is that you show your work and tell me what you have found.
+
+```{r}
+
+ukrainedata = coal_country %>% 
+  filter(destination == "Ukraine")
+
+ukrainedata = ukrainedata %>% 
+  group_by(year) %>% 
+  summarize(sum(total, na.rm = T))
+
+colnames(ukrainedata) = c("year", "total")
+
+ukrainedata %>% 
+  ggplot() +
+  geom_point(aes(x = year, y = total))+
+  geom_line(aes(x = year, y = total))+
+  scale_y_continuous(labels = scales::comma)
+
+```
+
+** This doesn't exactly correspond to what I would have expected, so I dug into the tainted well of the internet again (while avoiding the vacuous black abyss that is Politico after what happened earlier in this assignment).  It turns out that Ukraine first started using coal-fired power plants in 2011 and then signed an agreement with China shortly thereafter.  Ukraine's domestic coal production fell significantly between 2014-2015 because a large portion of their production takes place in the occupied territory on the east side of the country.  Apparently they originally had to turn to Russia, of all places, to make up the deficit (after all, those Russian military operatives were just on vacation in eastern Ukraine and were in no way on an officially sanctioned mission).  In 2015-2016, they began importing much more coal from other sources, including the US.  I'm guessing the massive "falloff" for 2020 is simply due to the missing Q4 data. **
