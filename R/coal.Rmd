@@ -128,7 +128,7 @@ coalquartertotals %>%
 
 ```
 
-*Hint: ggplot2 is going to want you to convert your quarterly data into actual date format before it plots nicely. (i.e. Don't leave it as a string.)*
+
 
 **It looks like quarter 2 2012 was the actual export peak, and the fall began in quarter 3 2012.  Additionally, it looks like the most coal is generally exported in quarter 2**
 
@@ -206,7 +206,7 @@ coal_country
 
 ### 4.5) Culmulative top 10 US coal export destinations
 
-Produce a vector --- call it `coal10_culm` --- of the top 10 top coal destinations over the full min(coal$year, na.rm=T)--\r max(coal$year, na.rm=T))` study period. What are they?
+Produce a vector --- call it `coal10_culm` --- of the top 10 top coal destinations over the full study period. What are they?
 
 ```{r}
 coal_cum = coal_country %>% 
@@ -293,15 +293,13 @@ coalbycountry %>%
   theme_igray()
 ```
 
-*Hint: You've got loads of options here. If you haven't already done so, consider a more bespoke theme with the `ggthemes`, `hrbrthemes`, or `cowplot` packages. Try out `scale_fill_brewer()` and `scale_colour_brewer()` for a range of interesting colour palettes. Try some transparency effects with `alpha`. Give your axis labels more refined names with the `labs()` layer in ggplot2. While you're at it, you might want to scale (i.e. normalise) your y-variable to get rid of all those zeros. You can shorten any country names to their ISO abbreviation; see `?countrycode::countrycode`. More substantively --- but more complicated --- you might want to re-order your legend (and the plot itself) according to the relative importance of the destination countries. See `?forcats::fct_reorder` or forcats::fct_relevel`.*
 
 **To me, a stacked-area representation is a lot more coherent.  Lasagna does tend to be a bit more appealing than spaghetti, after all**
 
 ### 4.9) Make it interactive
 
-Create an interactive version of your previous figure.
+**I opted for an animated histogram.  I think it is quite interesting to see the rather explosive growth in "other" after 2009 compared to the trends in the top countries.**
 
-*Hint: Take a look at plotly::ggplotly(), or the gganimate package.*
 
 ```{r}
 barplot = coalbycountry %>% 
@@ -323,7 +321,6 @@ animate(barplot)
 
 ## 5) Show me something interesting
 
-There's a lot still to explore with this data set. Your final task is to show me something interesting. Drill down into the data and explain what's driving the secular trends that we have observed above. Or highlight interesting seasonality within a particular country. Or go back to the original `coal` data frame and look at exports by customs district, or by coal type. Do we changes or trends there? Etcetera. Etcetera. My only requirement is that you show your work and tell me what you have found.
 
 ```{r}
 
@@ -344,4 +341,4 @@ ukrainedata %>%
 
 ```
 
-** This doesn't exactly correspond to what I would have expected, so I dug into the tainted well of the internet again (while avoiding the vacuous black abyss that is Politico after what happened earlier in this assignment).  It turns out that Ukraine first started using coal-fired power plants in 2011 and then signed an agreement with China shortly thereafter.  Ukraine's domestic coal production fell significantly between 2014-2015 because a large portion of their production takes place in the occupied territory on the east side of the country.  Apparently they originally had to turn to Russia, of all places, to make up the deficit (after all, those Russian military operatives were just on vacation in eastern Ukraine and were in no way on an officially sanctioned mission).  In 2015-2016, they began importing much more coal from other sources, including the US.  I'm guessing the massive "falloff" for 2020 is simply due to the missing Q4 data. **
+**This doesn't exactly correspond to what I would have expected, so I dug into the tainted well of the internet again (while avoiding the vacuous black abyss that is Politico after what happened earlier in this assignment).  It turns out that Ukraine first started using coal-fired power plants in 2011 and then signed an agreement with China shortly thereafter.  Ukraine's domestic coal production fell significantly between 2014-2015 because a large portion of their production takes place in the occupied territory on the east side of the country.  Apparently they originally had to turn to Russia, of all places, to make up the deficit (after all, those Russian military operatives were just on vacation in eastern Ukraine and were in no way on an officially sanctioned mission).  In 2015-2016, they began importing much more coal from other sources, including the US.  I'm guessing the massive "falloff" for 2020 is simply due to the missing Q4 data.**

@@ -1,7 +1,7 @@
 ---
 title: "US coal exports"
 author: "Joel Bazzle"
-date: "31 January 2021"
+date: "03 February 2021"
 output:
   html_document:
     theme: yeti
@@ -19,8 +19,6 @@ output:
 ### Load libraries
 
 It's a good idea to load your libraries at the top of the Rmd document so that everyone can see what you're using. Similarly, it's good practice to set `cache=FALSE` to ensure that the libraries are dynamically loaded each time you knit the document.
-
-*Hint: I've only added the libraries needed to download and read the data. You'll need to load additional libraries to complete this assignment. Add them here once you discover that you need them.* 
 
 
 ```r
@@ -84,16 +82,11 @@ names(coal)
 ## [13] "coke"                     "coke_revenue"
 ```
 
-Clean them. 
-
-*Hint: Use either `gsub()` and regular expressions or, more simply, the `janitor()` package. You will need to install the latter first.*
-
 
 ## 2) Total US coal exports over time (year only)
 
 Plot the US's total coal exports over time by year ONLY. What secular trends do you notice in the data?
 
-*Hints: If you want nicely formatted y-axis label, add `+ scale_y_continuous(labels = scales::comma)` to your `ggplot2` code.*
 
 
 ```r
@@ -160,7 +153,7 @@ coalquartertotals %>%
 ## Note for future self: coerce these god awful, incoherent, colorblind unfriendly pallets using limits = (interval)
 ```
 
-*Hint: ggplot2 is going to want you to convert your quarterly data into actual date format before it plots nicely. (i.e. Don't leave it as a string.)*
+
 
 **It looks like quarter 2 2012 was the actual export peak, and the fall began in quarter 3 2012.  Additionally, it looks like the most coal is generally exported in quarter 2**
 
@@ -558,7 +551,7 @@ frequencytable2
 ## 150                                Vietnam   76
 ## 151                          Western Samoa   76
 ```
-*Hints: See `?tidyr::complete()` for some convenience options. Again, don't forget to print `coal_country` after you've updated the data frame so that I can see the results.*
+
 
 ### 4.4 Some more tidying up
 
@@ -604,7 +597,7 @@ coal_country
 
 ### 4.5) Culmulative top 10 US coal export destinations
 
-Produce a vector --- call it `coal10_culm` --- of the top 10 top coal destinations over the full min(coal$year, na.rm=T)--\r max(coal$year, na.rm=T))` study period. What are they?
+Produce a vector --- call it `coal10_culm` --- of the top 10 top coal destinations over the full study period. What are they?
 
 
 ```r
@@ -670,6 +663,8 @@ coal10_recent
 ##  9 Dominican Republic             
 ## 10 Austria
 ```
+
+
 **Many of the differences are not surprising (Germany and the UK not being in the top ten, India being at the top).  Ukraine being in the top ten is pretty interesting.  I imagine they've shifted a fair portion of their energy dependence to the US in light of their closest trading partner launching an invasion and annexing part of their territory.  I also would have thought that Japan and South Korea would have been on a similar trajectory to the UK and Germany in terms of coal use, but this serves as evidence that assumption may not be correct.**
 
 
@@ -698,6 +693,9 @@ coalbycountry %>%
 ```
 
 ![](coal_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+
+
 **As someone that loves pasta, let me be the first to say that this spaghetti looks disgusting**
 
 ### 4.8) Make it pretty
@@ -713,7 +711,7 @@ coalbycountry %>%
   geom_area()+
   scale_y_continuous(labels = scales::comma)+
   scale_fill_viridis(discrete = T, option = "cividis")+
-  ggtitle("Top Importers of US Coal 2002-Present")+
+  ggtitle("Top Importers of US Coal", subtitle= "2002-Present")+
   xlab("Year")+
   ylab("Tons of Coal")+
   theme_igray()
@@ -721,29 +719,28 @@ coalbycountry %>%
 
 ![](coal_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
-*Hint: You've got loads of options here. If you haven't already done so, consider a more bespoke theme with the `ggthemes`, `hrbrthemes`, or `cowplot` packages. Try out `scale_fill_brewer()` and `scale_colour_brewer()` for a range of interesting colour palettes. Try some transparency effects with `alpha`. Give your axis labels more refined names with the `labs()` layer in ggplot2. While you're at it, you might want to scale (i.e. normalise) your y-variable to get rid of all those zeros. You can shorten any country names to their ISO abbreviation; see `?countrycode::countrycode`. More substantively --- but more complicated --- you might want to re-order your legend (and the plot itself) according to the relative importance of the destination countries. See `?forcats::fct_reorder` or forcats::fct_relevel`.*
 
 **To me, a stacked-area representation is a lot more coherent.  Lasagna does tend to be a bit more appealing than spaghetti, after all**
 
 ### 4.9) Make it interactive
 
-Create an interactive version of your previous figure.
+**I opted for an animated histogram.  I think it is quite interesting to see the rather explosive growth in "other" after 2009 compared to the trends in the top countries.**
 
-*Hint: Take a look at plotly::ggplotly(), or the gganimate package.*
 
 
 ```r
-test = coalbycountry %>% 
-  ggplot(aes(x = year, y = total, color = destination, size = total)) +
-  geom_point(alpha = .7)+
+barplot = coalbycountry %>% 
+  ggplot(aes(x = destination, y = total, fill = destination)) +
+  geom_bar(stat = 'identity')+
   scale_y_continuous(labels = scales::comma)+
   scale_fill_viridis(discrete = T, option = "cividis")+
   theme_minimal()+
-  labs(title = 'year:{frame_time}', x = 'Year', y = 'Tons of Coal')+
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())+
+  labs(title = 'year:{frame_time}', x = 'Country', y = 'Tons of Coal')+
   transition_time(year)+
   ease_aes('linear')
 
-animate(test)
+animate(barplot)
 ```
 
 ![](coal_files/figure-html/unnamed-chunk-13-1.gif)<!-- -->
@@ -751,4 +748,25 @@ animate(test)
 
 ## 5) Show me something interesting
 
-There's a lot still to explore with this data set. Your final task is to show me something interesting. Drill down into the data and explain what's driving the secular trends that we have observed above. Or highlight interesting seasonality within a particular country. Or go back to the original `coal` data frame and look at exports by customs district, or by coal type. Do we changes or trends there? Etcetera. Etcetera. My only requirement is that you show your work and tell me what you have found.
+
+
+```r
+ukrainedata = coal_country %>% 
+  filter(destination == "Ukraine")
+
+ukrainedata = ukrainedata %>% 
+  group_by(year) %>% 
+  summarize(sum(total, na.rm = T))
+
+colnames(ukrainedata) = c("year", "total")
+
+ukrainedata %>% 
+  ggplot() +
+  geom_point(aes(x = year, y = total))+
+  geom_line(aes(x = year, y = total))+
+  scale_y_continuous(labels = scales::comma)
+```
+
+![](coal_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
+**This doesn't exactly correspond to what I would have expected, so I dug into the tainted well of the internet again (while avoiding the vacuous black abyss that is Politico after what happened earlier in this assignment).  It turns out that Ukraine first started using coal-fired power plants in 2011 and then signed an agreement with China shortly thereafter.  Ukraine's domestic coal production fell significantly between 2014-2015 because a large portion of their production takes place in the occupied territory on the east side of the country.  Apparently they originally had to turn to Russia, of all places, to make up the deficit (after all, those Russian military operatives were just on vacation in eastern Ukraine and were in no way on an officially sanctioned mission).  In 2015-2016, they began importing much more coal from other sources, including the US.  I'm guessing the massive "falloff" for 2020 is simply due to the missing Q4 data.**
